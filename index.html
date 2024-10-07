@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map with Red Line</title>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+    <style>
+      #map {
+        height: 500px;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+
+    <h1>red string theory</h1>
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <script>
+      const lat1 = 40.7128,
+        long1 = -74.0060;
+      const lat2 = 34.0522,
+        long2 = -118.2437;
+
+      const map = L.map('map').setView([lat1, long1], 4);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+      }).addTo(map);
+
+      const position1 = [lat1, long1];
+      const position2 = [lat2, long2];
+
+      L.marker(position1).addTo(map).bindPopup('Sydney Gu').openPopup();
+      L.marker(position2).addTo(map).bindPopup('Michelle Liu');
+
+      const polyline = L.polyline([position1, position2], {
+        color: 'red'
+      }).addTo(map);
+
+      map.fitBounds(polyline.getBounds());
+    </script>
+
+  </body>
+</html>
