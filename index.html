@@ -11,6 +11,8 @@
       #map {
         height: 500px;
         width: 100%;
+        border: 10px solid red;
+
       }
 
       body {
@@ -20,6 +22,7 @@
         height: 100%;
         margin: 0;
         color: red;
+        background-color: black;
       }
 
       .h1 {
@@ -31,8 +34,7 @@
       }
 
       .h1:hover {
-        filter: invert(0.5);
-        font-variant: small-caps;
+        filter: drop-shadow(10px 5px 5px blue);
       }
 
       .h2 {
@@ -45,19 +47,26 @@
       }
 
       .h2:hover {
-        filter: drop-shadow(10px 5px 5px gray);
+        filter: drop-shadow(10px 5px 5px rgb(167, 10, 14));
+      }
+
+      .word {
+        position: absolute;
+        font-size: 24px;
+        opacity: 0.5;
       }
 
       .leaflet-popup-content-wrapper {
-        background-color: red;
-        color: black;
+        background-color: black;
+        color: red;
       }
     </style>
   </head>
   <body>
 
-    <h1 class="h1">red string of fate</h1>
+    <h1 class="h1">the red string of fate</h1>
     <div id="map"></div>
+    <h2 class="h2">00:00:00</h2>
     <h2 class="h2">sydney gu: (lat, long)</h2>
     <h2 class="h2">michelle liu: (lat, long)</h2>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -77,6 +86,7 @@
       const position1 = [lat1, long1];
       const position2 = [lat2, long2];
 
+      //code is from leaflet website
       var greenIcon = L.icon({
         iconUrl: 'leaf-green.png',
         shadowUrl: 'leaf-shadow.png',
@@ -112,12 +122,46 @@
 
 
       function onMapClick(e) {
-        alert("we are all connected");
+        alert("trigger next set of coords");
       }
 
       map.on('click', onMapClick);
 
       map.fitBounds(polyline.getBounds());
+
+      function getRandomWord() {
+        const words = ['we are all connected', 'connected', 'together', 'watching', 'inspecting', 'examining', 'entwined'];
+        return words[Math.floor(Math.random() * words.length)];
+      }
+
+      function getRandomPosition() {
+        const x = Math.random(0,1) * window.innerWidth;
+        const y = Math.random(0,1) * window.innerHeight;
+        return {
+          x,
+          y
+        };
+      }
+
+      function showRandomWord() {
+        const word = getRandomWord();
+        const position = getRandomPosition();
+
+        const wordElement = document.createElement('div');
+        wordElement.classList.add('word');
+        wordElement.innerText = word;
+
+        wordElement.style.left = `${position.x}px`;
+        wordElement.style.top = `${position.y}px`;
+
+        document.body.appendChild(wordElement);
+
+        setTimeout(() => {
+          wordElement.remove();
+        }, 300);
+      }
+
+      setInterval(showRandomWord, 300);
     </script>
 
   </body>
