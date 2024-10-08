@@ -33,8 +33,6 @@
 
       .h1:hover {
         filter: drop-shadow(10px 5px 5px rgb(167, 10, 14));
-        background-color: white;
-        border: 1px solid gray;
       }
 
       .h2 {
@@ -44,11 +42,6 @@
         text-align: center;
         cursor: pointer;
         position: relative;
-      }
-
-      .h2:hover {
-        filter: drop-shadow(10px 5px 5px rgb(167, 10, 14));
-        background-color: orange;
       }
 
       .word {
@@ -67,9 +60,9 @@
 
     <h1 class="h1">the red string of fate</h1>
     <div id="map"></div>
-    <h2 class="h2">01/01/2001</h2>
-    <h2 class="h2">sydney gu: (lat, long)</h2>
-    <h2 class="h2">michelle liu: (lat, long)</h2>
+    <h2 id="date" style="text-align:center"></h2>
+    <h2 id="syd" style="text-align:center"></h2>
+    <h2 id="mi" style="text-align:center"></h2>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
     <script>
@@ -91,11 +84,13 @@
         return result;
       }
 
+      //from Leaflet website
       const map = L.map('map').setView([45, -90], 4);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
       }).addTo(map);
 
+      //from Leaflet website
       const greenIcon = L.icon({
         iconUrl: 'leaf-green.png',
         shadowUrl: 'leaf-shadow.png',
@@ -129,54 +124,103 @@
       }
 
       async function main() {
-          const csv1 = await fetchCSV1();
-          const data1 = parseCSV(csv1);
+        const csv1 = await fetchCSV1();
+        const data1 = parseCSV(csv1);
 
-          const csv2 = await fetchCSV2();
-          const data2 = parseCSV(csv2);
+        const csv2 = await fetchCSV2();
+        const data2 = parseCSV(csv2);
 
-          let index1 = 0;
-          let index2 = 0;
+        let index1 = 0;
+        let index2 = 0;
 
-          function addMarker1() {
-            if (index1 < data1.length) {
+        function addMarker() {
+          const syd_loc = document.getElementById('syd');
+          const mi_loc = document.getElementById('mi');
+          const d = document.getElementById('date');
+          if (index1 < data1.length) {
+            const {
+              lat: lat1,
+              long: long1,
+              date: date1
+            } = data1[index1];
+
+            L.marker([lat1, long1], {
+              icon: greenIcon
+            }).addTo(map).bindPopup('Michelle Liu').openPopup();
+            mi_loc.innerHTML = `<br>Michelle Liu: (${lat1}, ${long1})`;
+            d.innerHTML = `${date1.substring(0, 10)}`;
+
+            index1++;
+            if (index2 < data2.length) {
               const {
-                lat,
-                long,
-                date
-              } = data1[index1];
+                lat: lat2,
+                long: long2,
+                date: date2
+              } = data2[index2];
 
-              L.marker([lat, long], {
-                icon: greenIcon
-              }).addTo(map).bindPopup('Michelle Liu').openPopup();
+              L.marker([lat2, long2], {
+                icon: orangeIcon
+              }).addTo(map).bindPopup('Sydney Gu');
+              syd_loc.innerHTML = `<br>Sydney Gu: (${lat2}, ${long2})`;
 
-              index1++;
-              if (index2 < data2.length) {
-                const {
-                  lat2,
-                  long2,
-                  date2
-                } = data2[index2];
+              index2++;
+            }
+            if (index1 > 0 && index2 > 0) {
+              const {
+                lat: prevLat1,
+                long: prevLong1
+              } = data1[index1 - 1];
+              const {
+                lat: prevLat2,
+                long: prevLong2
+              } = data2[index2 - 1];
 
-                L.marker([lat2, long2], {
-                  icon: orangeIcon
-                }).addTo(map).bindPopup('Sydney Gu').openPopup();
-
-                index2++;
-              }
-              const polyline = L.polyline([[lat,long], [lat2,long2]], {
-              color: 'red'
-            }).addTo(map);
+              const polyline = L.polyline([
+                [prevLat1, prevLong1],
+                [prevLat2, prevLong2]
+              ], {
+                color: 'red'
+              }).addTo(map);
             }
           }
-            map.on('click', function() {
-              addMarker1();
-            });
+        }
+        map.on('click', function() {
+          addMarker();
+        });
 
-            addMarker1();
-          }
+        addMarker();
+      }
 
-          main();
+      main();
+
+      function getRandomWord() {
+        const words = ['we are all connected', 'connected', 'together', 'watching', 'inspecting', 'examining', 'entwined'];
+        return words[Math.floor(Math.random() * words.length)];
+      }
+
+      function getRandomPosition() {
+        const x = Math.random(0, 1) * window.innerWidth;
+        const y = Math.random(0, 1) * window.innerHeight;
+        return {
+          x,
+          y
+        };
+      }
+
+      function showRandomWord() {
+        const word = getRandomWord();
+        const position = getRandomPosition();
+        const wordElement = document.createElement('div');
+        wordElement.classList.add('word');
+        wordElement.innerText = word;
+        wordElement.style.left = `${position.x}px`;
+        wordElement.style.top = `${position.y}px`;
+        document.body.appendChild(wordElement);
+        setTimeout(() => {
+          wordElement.remove();
+        }, 300);
+      }
+      setInterval(showRandomWord, 300);
     </script>
   </body>
 </html>
