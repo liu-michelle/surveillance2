@@ -129,59 +129,54 @@
       }
 
       async function main() {
-        const csv1 = await fetchCSV1();
-        const data1 = parseCSV(csv1);
+          const csv1 = await fetchCSV1();
+          const data1 = parseCSV(csv1);
 
-        const csv2 = await fetchCSV2();
-        const data2 = parseCSV(csv2);
+          const csv2 = await fetchCSV2();
+          const data2 = parseCSV(csv2);
 
-        let index1 = 0;
-        let index2 = 0;
+          let index1 = 0;
+          let index2 = 0;
 
-        function addMarker1() {
-          if (index < data1.length) {
-            const {
-              lat,
-              long,
-              date
-            } = data1[index1];
+          function addMarker1() {
+            if (index1 < data1.length) {
+              const {
+                lat,
+                long,
+                date
+              } = data1[index1];
 
-            L.marker([lat, long], {
-              icon: greenIcon
-            }).addTo(map).bindPopup('Michelle Liu').openPopup();
+              L.marker([lat, long], {
+                icon: greenIcon
+              }).addTo(map).bindPopup('Michelle Liu').openPopup();
 
-            index1++;
+              index1++;
+              if (index2 < data2.length) {
+                const {
+                  lat2,
+                  long2,
+                  date2
+                } = data2[index2];
+
+                L.marker([lat2, long2], {
+                  icon: orangeIcon
+                }).addTo(map).bindPopup('Sydney Gu').openPopup();
+
+                index2++;
+              }
+              const polyline = L.polyline([[lat,long], [lat2,long2]], {
+              color: 'red'
+            }).addTo(map);
+            }
           }
-        }
+            map.on('click', function() {
+              addMarker1();
+            });
 
-        function addMarker2() {
-          if (index2 < data2.length) {
-            const {
-              lat,
-              long,
-              date
-            } = data2[index2];
-
-            L.marker([lat, long], {
-              icon: orangeIcon
-            }).addTo(map).bindPopup('Sydney Gu').openPopup();
-
-            index2++;
+            addMarker1();
           }
-        }
 
-        map.on('click', function() {
-          addMarker1();
-          addMarker2();
-        });
-
-          addMarker1();
-          addMarker2();
-      }
-
-      main();
+          main();
     </script>
-
-
   </body>
 </html>
