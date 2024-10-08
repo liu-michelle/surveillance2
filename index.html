@@ -11,8 +11,7 @@
       #map {
         height: 500px;
         width: 100%;
-        border: 10px solid red;
-
+        border: 8px solid red;
       }
 
       body {
@@ -30,11 +29,12 @@
         margin: auto;
         width: 50%;
         text-align: center;
-        cursor: pointer;
       }
 
       .h1:hover {
-        filter: drop-shadow(10px 5px 5px blue);
+        filter: drop-shadow(10px 5px 5px rgb(167, 10, 14));
+        background-color: white;
+        border: 1px solid gray;
       }
 
       .h2 {
@@ -48,6 +48,7 @@
 
       .h2:hover {
         filter: drop-shadow(10px 5px 5px rgb(167, 10, 14));
+        background-color: orange;
       }
 
       .word {
@@ -66,12 +67,25 @@
 
     <h1 class="h1">the red string of fate</h1>
     <div id="map"></div>
-    <h2 class="h2">00:00:00</h2>
+    <h2 class="h2">01/01/2001</h2>
     <h2 class="h2">sydney gu: (lat, long)</h2>
     <h2 class="h2">michelle liu: (lat, long)</h2>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
     <script>
+      function parseCSV(csv) {
+    const lines = csv.split("\n");
+    const result = [];
+    
+    for (let i = 1; i < lines.length; i++) {
+        const line = lines[i];
+        if (line) {
+            const [date, loc] = line.split(",");
+            result.push({ date, loc });
+        }
+    }
+    return result;
+}
       const lat1 = 40.7128,
         long1 = -74.0060;
       const lat2 = 34.0522,
@@ -87,7 +101,7 @@
       const position2 = [lat2, long2];
 
       //code is from leaflet website
-      var greenIcon = L.icon({
+      const greenIcon = L.icon({
         iconUrl: 'leaf-green.png',
         shadowUrl: 'leaf-shadow.png',
 
@@ -98,7 +112,7 @@
         popupAnchor: [-3, -76]
       });
 
-      var orangeIcon = L.icon({
+      const orangeIcon = L.icon({
         iconUrl: 'leaf-orange.png',
         shadowUrl: 'leaf-shadow.png',
 
